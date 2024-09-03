@@ -6,13 +6,13 @@ using Microsoft.Extensions.Logging;
 
 namespace IsolatedFunctions
 {
-    public static class Function
+    public static class FunctionGeneric
     {
-        [Function(nameof(Function))]
+        [Function(nameof(FunctionGeneric))]
         public static async Task<List<string>> RunOrchestrator(
             [OrchestrationTrigger] TaskOrchestrationContext context)
         {
-            ILogger logger = context.CreateReplaySafeLogger(nameof(Function));
+            ILogger logger = context.CreateReplaySafeLogger(nameof(FunctionGeneric));
             logger.LogInformation("Saying hello.");
             var outputs = new List<string>();
 
@@ -33,7 +33,7 @@ namespace IsolatedFunctions
             return $"Hello {name}!";
         }
 
-        [Function("Function_HttpStart")]
+        [Function("FunctionGeneric_HttpStart")]
         public static async Task<HttpResponseData> HttpStart(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestData req,
             [DurableClient] DurableTaskClient client,
@@ -43,7 +43,7 @@ namespace IsolatedFunctions
 
             // Function input comes from the request content.
             string instanceId = await client.ScheduleNewOrchestrationInstanceAsync(
-                nameof(Function));
+                nameof(FunctionGeneric));
 
             logger.LogInformation("Started orchestration with ID = '{instanceId}'.", instanceId);
 
